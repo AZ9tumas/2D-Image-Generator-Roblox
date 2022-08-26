@@ -43,6 +43,8 @@ local total_itr_count = 0
 local x_itr = 0
 local y_itr = 0
 
+-- Change the sign of the increments of the loops, depending on the starting value and the ending value of the loop
+
 for x = startpos.X - distance_per_x, endpos.X, -distance_per_x do
 
 	local row_pixel_data = {}
