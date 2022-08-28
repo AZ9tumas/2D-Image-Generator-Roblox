@@ -1,21 +1,9 @@
 local module = {}
 
---// Raycast through the entire baseplate
-
-module.startXpos = 50
-module.endXpos = -50
-
-module.startZpos = -50
-module.endZpos = 50
-
 function module:CastRay(x,y)
-	-- return in {r, g, b}
 	
-	-- i in range of [1, 100]
-	-- j in range of [0, 099]
-	
-	local finalx = x--module.startXpos - i
-	local finalz = y--module.startZpos + j
+	local finalx = x
+	local finalz = y
 	
 	local params = RaycastParams.new()
 	params.FilterType = Enum.RaycastFilterType.Blacklist
