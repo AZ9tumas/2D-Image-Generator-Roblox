@@ -32,23 +32,44 @@ local distance_per_x = math.abs(xDistance / xpix)
 local zDistance = startpos.Z - endpos.Z -- 300
 local distance_per_z = math.abs(zDistance / zpix)
 
-print(startpos.X, endpos.X, distance_per_x)
-print(startpos.Z, endpos.Z, distance_per_z)
+-- iteration count fix:
 
-print(xDistance, zDistance)
+local startx = 0
+local startz = 0
+
+-- x work
+local xItr = distance_per_x
+if startpos.X > endpos.X then
+	startx = startpos.X - xItr
+	xItr = -xItr
+else
+	startx = startpos.X + xItr
+end
+
+-- z work
+local zItr = distance_per_x
+if startpos.Z > endpos.Z then
+	startz = startpos.Z - zItr
+	zItr = -zItr
+else
+	startz = startpos.Z + zItr
+end
+
+print(startx, endpos.X, xItr)
+print(startz, endpos.Z, zItr)
 
 local total_itr_count = 0
 local x_itr = 0
 local y_itr = 0
 
-for x = startpos.X + distance_per_x, endpos.X, distance_per_x do
+for x = startx, endpos.X, xItr do
 
 	local row_pixel_data = {}
-	
+
 	x_itr += 1
-	
+
 	local didYwork = false
-	for y = startpos.Z - distance_per_z, endpos.Z, -distance_per_z do
+	for y = startz, endpos.Z, zItr do
 		didYwork = true
 		total_itr_count += 1
 		y_itr += 1
