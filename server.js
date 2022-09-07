@@ -1,9 +1,8 @@
 const express = require("express");
 const bodyparser = require("body-parser");
 const fs = require("fs");
-const { exit } = require("process");
-const X_LEN = 720 // Pixel Length in (X)
-const Z_LEN = 720 // Pixel Length in (Y)
+const X_LEN = 900 // Pixel Length in (X)
+const Z_LEN = 900 // Pixel Length in (Y)
 
 var app = express();
 
@@ -29,6 +28,13 @@ app.post('/', function (req, res) {
         var r = row[0]
         var g = row[1]
         var b = row[2]
+        var name = row[3]
+
+        if (row[4] == true) {
+            r *= 0.65
+            g *= 0.65
+            b *= 0.65
+        }
 
         notePixel(r, g, b)
     }
