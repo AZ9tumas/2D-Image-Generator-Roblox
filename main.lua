@@ -47,7 +47,7 @@ else
 end
 
 -- z work
-local zItr = distance_per_x
+local zItr = distance_per_z
 if startpos.Z > endpos.Z then
 	startz = startpos.Z - zItr
 	zItr = -zItr
