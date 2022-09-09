@@ -6,8 +6,8 @@ lines = pixel_data.readlines()
 
 print(len(lines))
 
-MAX_X = 900
-MAX_Y = 900
+MAX_X = 1200
+MAX_Y = 1200
 
 img = Image.new("RGB", (MAX_X, MAX_Y))
 
