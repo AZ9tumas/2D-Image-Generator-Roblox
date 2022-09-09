@@ -1,12 +1,14 @@
 const express = require("express");
 const bodyparser = require("body-parser");
 const fs = require("fs");
-const X_LEN = 900 // Pixel Length in (X)
-const Z_LEN = 900 // Pixel Length in (Y)
+const X_LEN = 1200 // Pixel Length in (X)
+const Z_LEN = 1200 // Pixel Length in (Y)
 
 var app = express();
 
 var content = ""
+
+var count = 0
 
 function notePixel(r, g, b){
     // Noting the pixel, so we can write it into file later
@@ -20,10 +22,27 @@ app.post('/', function (req, res) {
     // No print / log statements here to increase speed, this function is called millions of times.
     const body = req.body
 
-    const color_data = body.color // {r, g, b}
+    const color_data = body.color // {{r, g, b}}
+    const maxXpixels = body.maxPixels
+
+    count += 1
+    console.log(count)
+
+    function getRow(i){
+        var temp = i // 1200
+        var color_row = 0
+
+        while ( temp >= maxXpixels ) {
+            temp -= maxXpixels
+            color_row += 1
+        }
+        
+        console.log(color_row, temp)
+        return color_data[color_row][temp]
+    }
 
     for (var i = 0; i < Z_LEN; i ++){
-        var row = color_data[i]
+        var row = getRow(i)
 
         var r = row[0]
         var g = row[1]
