@@ -58,35 +58,40 @@ end
 print(startx, endpos.X, xItr)
 print(startz, endpos.Z, zItr)
 
-local total_itr_count = 0
-local x_itr = 0
-local y_itr = 0
+local MaxPixels = 1000
 
 for x = startx, endpos.X, xItr do
 
-	local row_pixel_data = {}
+	local PixelData = {
+		{} -- row pixel data
+	}
 
-	x_itr += 1
+	local curr_table_count = 1
 
-	local didYwork = false
+	-- Max Pixels in this table will be 1000
+	local count = 0
+	
 	for y = startz, endpos.Z, zItr do
-		didYwork = true
-		total_itr_count += 1
-		y_itr += 1
+
+		if count >= MaxPixels then
+			-- start adding pixels to another table
+			curr_table_count += 1
+			table.insert(PixelData, {})
+			--print('count', curr_table_count)
+			count = 0
+		end
+
+		count += 1
 		local instance = module:CastRay(x, y)
 		local color = instance.Color
-		table.insert(row_pixel_data, {color.R * 255, color.G * 255, color.B * 255, instance.Name, instance.InShade})
+		table.insert(PixelData[curr_table_count], {color.R * 255, color.G * 255, color.B * 255, instance.Name, instance.InShade})
+		--print(curr_table_count)
 	end
-	if not didYwork then warn('y did not work') end
-	print(y_itr)
-	y_itr = 0
+	print(';)')
 	-- Send the row data to the server
-	local response = send('/', {['color'] = row_pixel_data})
+	local response = send('/', {['color'] = PixelData, ['maxPixels'] = MaxPixels})
 end
 
 -- End the session
 send('/end', {})
 print('done')
-
-print('total itr count:',total_itr_count)
-print('x count', x_itr)
