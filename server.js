@@ -8,12 +8,11 @@ var app = express();
 
 var content = ""
 
-var count = 0
-
-function notePixel(r, g, b){
+function noteRow(r, g, b){
     // Noting the pixel, so we can write it into file later
     content += `${r} ${g} ${b}\n`
 }
+
 // Use JSON Parser
 app.use(bodyparser.json())
 
@@ -24,9 +23,7 @@ app.post('/', function (req, res) {
 
     const color_data = body.color // {{r, g, b}}
     const maxXpixels = body.maxPixels
-
-    count += 1
-    console.log(count)
+    const maxitr = body.maxitr
 
     function getRow(i){
         var temp = i // 1200
@@ -41,8 +38,8 @@ app.post('/', function (req, res) {
         return color_data[color_row][temp]
     }
 
-    for (var i = 0; i < Z_LEN; i ++){
-        var row = getRow(i)
+    for (var i = 0; i < maxitr; i ++){
+        var row = color_data[i] //getRow(i)
 
         var r = row[0]
         var g = row[1]
@@ -55,7 +52,7 @@ app.post('/', function (req, res) {
             b *= 0.65
         }
 
-        notePixel(r, g, b)
+        noteRow(r, g, b)
     }
 
     res.send(true)
