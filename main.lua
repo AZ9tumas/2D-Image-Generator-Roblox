@@ -1,16 +1,10 @@
 local http = game:GetService("HttpService")
 local port = 3000 
 local link = "http://localhost:"..port
-
-local module = require(script.Parent.ModuleScript)	
-
+local module = require(script.Parent.ModuleScript)
 local f = math.floor
-
-local x = 0
-local y = 0
-
-local startpos = Vector3.new(-150, 5, 150)
-local endpos = Vector3.new(150, 5, -150)
+local startpos = Vector3.new(-200, -35, 200)
+local endpos = Vector3.new(200, -35, -200)
 
 function send(path, data)
 	local e = http:JSONEncode(data)
@@ -32,65 +26,82 @@ local distance_per_x = math.abs(xDistance / xpix)
 local zDistance = startpos.Z - endpos.Z -- 300
 local distance_per_z = math.abs(zDistance / zpix)
 
--- iteration count fix:
-
-local startx = 0
-local startz = 0
 
 -- x work
 local xItr = distance_per_x
 if startpos.X > endpos.X then
-	startx = startpos.X - xItr
 	xItr = -xItr
-else
-	startx = startpos.X + xItr
 end
 
 -- z work
 local zItr = distance_per_z
 if startpos.Z > endpos.Z then
-	startz = startpos.Z - zItr
 	zItr = -zItr
-else
-	startz = startpos.Z + zItr
 end
 
-print(startx, endpos.X, xItr)
-print(startz, endpos.Z, zItr)
+-- Debug
+print(startpos.X,',', endpos.X,',', xItr)
+print(startpos.Z,',', endpos.Z,',', zItr)
 
+-- Max pixels in each table
 local MaxPixels = 1000
+local x = startpos.X
 
-for x = startx, endpos.X, xItr do
-
+local function xwork()
+	-- The entire table contains rows which each have a max of (maxPixels) pixels
 	local PixelData = {
-		{} -- row pixel data
+		{}
 	}
 
-	local curr_table_count = 1
+	local curr_table_count = 1 -- Insert the pixel info into this index of the main table
 
-	-- Max Pixels in this table will be 1000
-	local count = 0
-	
-	for y = startz, endpos.Z, zItr do
+	local count = 0 -- Keep track of the number of pixels in the sub table
 
+	local y = startpos.Z -- Initializing the y coordinate
+
+	while count + MaxPixels * (curr_table_count - 1) < zpix do
+
+		-- Split Pixel data into two tables so the size can be handelled
 		if count >= MaxPixels then
-			-- start adding pixels to another table
 			curr_table_count += 1
 			table.insert(PixelData, {})
-			--print('count', curr_table_count)
+
 			count = 0
 		end
 
-		count += 1
+		-- Get the color from the ray
 		local instance = module:CastRay(x, y)
 		local color = instance.Color
-		table.insert(PixelData[curr_table_count], {color.R * 255, color.G * 255, color.B * 255, instance.Name, instance.InShade})
-		--print(curr_table_count)
+		table.insert(PixelData[curr_table_count], {(color.R) * 255, (color.G) * 255, (color.B) * 255, instance.Name, instance.InShade})
+
+		-- Incrementing stuff
+		y += zItr
+		count += 1
 	end
-	print(';)')
 	-- Send the row data to the server
-	local response = send('/', {['color'] = PixelData, ['maxPixels'] = MaxPixels})
+
+	-- Instead of sending the entire PixelData (which conatains tables with 1000+ elements each), we can
+	-- just send each of the table individually (which means no of reqs sent per pixel scan = curr_table_count
+
+	for _, row_data in pairs(PixelData) do
+		local response = send('/', {['color'] = row_data, ['maxPixels'] = MaxPixels, ['maxitr'] = #row_data})
+	end
+
+	return y
 end
+
+local xcount = 0
+
+local yinfo
+
+while xcount < xpix do -- xcount < 1200 (0 -> 1199) total itr count = 1199 - 0 + 1 = 1200
+	yinfo = xwork()
+	print(';)', yinfo)
+	x += xItr
+	xcount += 1
+end
+
+print('(', x, ',', yinfo, ')')
 
 -- End the session
 send('/end', {})
