@@ -3,8 +3,8 @@ local port = 3000
 local link = "http://localhost:"..port
 local module = require(script.Parent.ModuleScript)
 local f = math.floor
-local startpos = Vector3.new(-200, -35, 200)
-local endpos = Vector3.new(200, -35, -200)
+local startpos = Vector3.new(-200, -35, 200) -- starting vector position
+local endpos = Vector3.new(200, -35, -200) -- ending vector position
 
 function send(path, data)
 	local e = http:JSONEncode(data)
