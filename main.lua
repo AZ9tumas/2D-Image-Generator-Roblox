@@ -45,7 +45,7 @@ print(startpos.Z,',', endpos.Z,',', zItr)
 local MaxPixels = 1000
 local x = startpos.X
 
-local function xwork()
+local function start_ray()
 	local PixelData = {{}} -- Pixel data
 	local curr_table_count = 1 -- Insert the pixel info into this index of the main table
 	local count = 0 -- Keep track of the number of pixels in the sub table
@@ -75,7 +75,7 @@ end
 local xcount = 0
 local yinfo
 while xcount < xpix do -- xcount < 1200 (0 -> 1199) total itr count = 1199 - 0 + 1 = 1200
-	yinfo = xwork()
+	yinfo = start_ray()
 	print(';)', yinfo)
 	x += xItr
 	xcount += 1
