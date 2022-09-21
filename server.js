@@ -1,8 +1,8 @@
 const express = require("express");
 const bodyparser = require("body-parser");
 const fs = require("fs");
-const X_LEN = 1200 // Pixel Length in (X)
-const Z_LEN = 1200 // Pixel Length in (Y)
+const X_LEN = 1470 // Pixel Length in (X)
+const Z_LEN = 2105 // Pixel Length in (Y)
 
 var app = express();
 
